@@ -2,9 +2,16 @@ class PostItemModel {
   String thumbnailUrl;
   String title;
   String url;
+  String? creationTime;
+  String? commentCount;
 
-  PostItemModel(
-      {required this.thumbnailUrl, required this.title, required this.url});
+  PostItemModel({
+    required this.thumbnailUrl,
+    required this.title,
+    required this.url,
+    this.creationTime,
+    this.commentCount,
+  });
 
   @override
   bool operator ==(Object other) {
@@ -29,7 +36,10 @@ class PostModel extends PostItemModel {
     this.authorName,
     this.authorPageUrl,
   }) : super(
-            title: postItemModel.title,
-            url: postItemModel.url,
-            thumbnailUrl: postItemModel.thumbnailUrl);
+          title: postItemModel.title,
+          url: postItemModel.url,
+          thumbnailUrl: postItemModel.thumbnailUrl,
+          creationTime: postItemModel.creationTime,
+          commentCount: postItemModel.commentCount,
+        );
 }

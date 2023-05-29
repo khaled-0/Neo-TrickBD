@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neo_trickbd/tabs/posts.dart';
 
@@ -10,6 +11,19 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int tabIndex = 0;
+  late PageController tabController;
+
+  final tabs = [
+    const Posts(),
+    const SizedBox(),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    tabController = PageController(initialPage: tabIndex);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,23 +33,33 @@ class _HomeState extends State<Home> {
         centerTitle: true,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        onTap: (value) => setState(() => tabIndex = value),
+        onTap: (value) => setState(() {
+          tabIndex = value;
+          tabController.jumpToPage(value);
+        }),
         currentIndex: tabIndex,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.rss_feed_rounded),
+            icon: Icon(CupertinoIcons.list_bullet_below_rectangle),
             label: "Recent",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search_rounded),
+            icon: Icon(CupertinoIcons.search),
             label: "Search",
           )
         ],
       ),
-      body: [
-        const Posts(),
-        const SizedBox(),
-      ][tabIndex],
+      body: PageView(
+        controller: tabController,
+        children: tabs,
+        onPageChanged: (value) => setState(() => tabIndex = value),
+      ),
     );
+  }
+
+  @override
+  void dispose() {
+    tabController.dispose();
+    super.dispose();
   }
 }

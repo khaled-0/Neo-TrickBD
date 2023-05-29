@@ -8,11 +8,18 @@ void main() {
       title: 'NeoTrickBD',
       home: const Home(),
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        colorScheme: const ColorScheme.light(
+          primary: Colors.blue,
+          secondary: Colors.blueAccent,
+        ),
         useMaterial3: true,
       ),
       darkTheme: ThemeData(
-        primarySwatch: Colors.blue,
+        colorScheme: const ColorScheme.dark(
+          primary: Colors.blue,
+          secondary: Colors.blueAccent,
+          brightness: Brightness.dark,
+        ),
         brightness: Brightness.dark,
         useMaterial3: true,
       ),
