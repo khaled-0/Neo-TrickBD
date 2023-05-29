@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
 import 'package:neo_trickbd/views/post.dart';
 
-import 'dio.dart';
-import 'models/post_model.dart';
+import '../dio.dart';
+import '../models/post_model.dart';
 
 class Posts extends StatefulWidget {
   const Posts({super.key});
