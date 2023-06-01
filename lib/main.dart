@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 
+import 'dio.dart';
 import 'home.dart';
 
-void main() {
+bool isDarkTheme(BuildContext context) =>
+    Theme.of(context).brightness == Brightness.dark;
+
+Future<void> main() async {
+  await initDioClient();
+
   runApp(
     MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'NeoTrickBD',
       home: const Home(),
       theme: ThemeData(

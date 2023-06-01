@@ -3,7 +3,7 @@ class PostItemModel {
   String title;
   String url;
   String? creationTime;
-  String? commentCount;
+  int? commentCount;
 
   PostItemModel({
     required this.thumbnailUrl,
@@ -25,7 +25,10 @@ class PostItemModel {
 class PostModel extends PostItemModel {
   String? body;
 
+  int? likeCount;
+
   String? authorName;
+  String? authorRole;
   String? authorAvatarUrl;
   String? authorPageUrl;
 
@@ -35,6 +38,8 @@ class PostModel extends PostItemModel {
     this.authorAvatarUrl,
     this.authorName,
     this.authorPageUrl,
+    this.authorRole,
+    this.likeCount,
   }) : super(
           title: postItemModel.title,
           url: postItemModel.url,

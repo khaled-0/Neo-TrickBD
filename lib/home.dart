@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neo_trickbd/tabs/posts.dart';
 
@@ -29,7 +28,11 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Icon(Icons.wifi_rounded),
+        title: Image.asset(
+          "assets/logo.png",
+          fit: BoxFit.contain,
+          width: 120,
+        ),
         centerTitle: true,
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -40,11 +43,11 @@ class _HomeState extends State<Home> {
         currentIndex: tabIndex,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.list_bullet_below_rectangle),
+            icon: Icon(Icons.view_list_rounded),
             label: "Recent",
           ),
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.search),
+            icon: Icon(Icons.search),
             label: "Search",
           )
         ],

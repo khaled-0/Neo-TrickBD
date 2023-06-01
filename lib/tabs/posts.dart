@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
+import 'package:neo_trickbd/components/PostItemView.dart';
 import 'package:neo_trickbd/views/post.dart';
+import 'package:skeletons/skeletons.dart';
 
 import '../dio.dart';
 import '../models/post_model.dart';
@@ -10,7 +12,7 @@ class Posts extends StatefulWidget {
 
   Future<List<PostItemModel>> getPosts({required int page}) async {
     final response = parse(
-      (await dio.get(getTrickBDRoute("/page/$page"))).data,
+      (await dio.get("/page/$page")).data,
     );
 
     var recentPostsUl =
@@ -24,14 +26,16 @@ class Posts extends StatefulWidget {
       var thumbnailUrl =
           element.querySelector("img")?.attributes["src"]?.trim();
       var creationTime = element.querySelector("p")?.firstChild?.text?.trim();
+
       var commentCount = element.querySelector("p > a")?.text.trim();
+      commentCount = commentCount?.replaceAll(RegExp(r'[^0-9]'), '');
 
       recentPosts.add(PostItemModel(
         url: url ?? "null",
         title: title ?? "null",
         thumbnailUrl: thumbnailUrl ?? "null",
         creationTime: creationTime,
-        commentCount: commentCount,
+        commentCount: int.tryParse(commentCount ?? "") ?? 0,
       ));
     });
 
@@ -50,6 +54,7 @@ class _PostsState extends State<Posts>
 
   void fetchMorePosts() {
     page++;
+    setState(() => statusMessage = null);
     widget.getPosts(page: page).then((value) {
       for (var element in value) {
         if (!posts.contains(element)) posts.add(element);
@@ -58,14 +63,16 @@ class _PostsState extends State<Posts>
       setState(() => statusMessage = null);
     }).onError((error, stackTrace) {
       page--;
-      setState(() => statusMessage = error.toString());
+      Future.delayed(const Duration(milliseconds: 500), () {
+        setState(() => statusMessage = error.toString());
+      });
     });
   }
 
   bool _handleScrollNotification(ScrollNotification notification) {
     if (notification is ScrollEndNotification) {
       if (notification.metrics.extentAfter < posts.length / 3) {
-        fetchMorePosts();
+        if (statusMessage == null) fetchMorePosts();
       }
     }
     return false;
@@ -82,80 +89,59 @@ class _PostsState extends State<Posts>
     super.build(context);
     return NotificationListener<ScrollNotification>(
       onNotification: _handleScrollNotification,
-      child: ListView.builder(
-        shrinkWrap: true,
-        physics: const BouncingScrollPhysics(),
-        itemCount: posts.length + 1,
-        itemBuilder: (context, index) {
-          if (index == posts.length) {
-            if (statusMessage == null) {
-              return const Center(
-                child: CircularProgressIndicator(), //TODO Skeleton here
+      child: RefreshIndicator(
+        onRefresh: () async => setState(() {
+          page = 0;
+          posts.clear();
+          fetchMorePosts();
+        }),
+        child: ListView.builder(
+          physics: const BouncingScrollPhysics(),
+          itemCount: posts.length + 1,
+          itemBuilder: (context, index) {
+            if (index == posts.length) {
+              if (statusMessage == null) {
+                //Skeleton Loader
+                return Column(
+                  children: List.filled(
+                    8,
+                    SkeletonListTile(
+                      hasSubtitle: true,
+                      leadingStyle:
+                          const SkeletonAvatarStyle(height: 96, width: 96),
+                      subtitleStyle:
+                          const SkeletonLineStyle(randomLength: true),
+                      padding: const EdgeInsets.all(2),
+                    ),
+                  ),
+                );
+              }
+
+              //TODO Prettify this error box
+              return Row(
+                children: [
+                  Expanded(child: Text(statusMessage ?? "Null")),
+                  TextButton(
+                      onPressed: fetchMorePosts, child: const Text("RETRY"))
+                ],
               );
             }
-            return Row(
-              children: [
-                Text(statusMessage ?? "Null"),
-                const Spacer(),
-                TextButton(
-                    onPressed: fetchMorePosts, child: const Text("RETRY"))
-              ],
-            );
-          }
 
-          PostItemModel post = posts[index];
-          return Padding(
-            padding: const EdgeInsets.only(top: 1.75, bottom: 1.75),
-            child: InkWell(
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Post(postItemModel: post),
+            PostItemModel post = posts[index];
+            return Padding(
+              padding: const EdgeInsets.only(top: 1.75, bottom: 1.75),
+              child: PostItemView(
+                post: post,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Post(postItemModel: post),
+                  ),
                 ),
               ),
-              child: Row(
-                children: [
-                  Image.network(
-                    post.thumbnailUrl,
-                    height: 148,
-                    width: 148,
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(post.title),
-                        Text(
-                          post.creationTime ?? "Unknown",
-                          style:
-                              Theme.of(context).textTheme.labelSmall?.copyWith(
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .labelSmall
-                                        ?.color
-                                        ?.withAlpha(200),
-                                  ),
-                        ),
-                        Text(
-                          post.commentCount ?? "?? Comment",
-                          style:
-                              Theme.of(context).textTheme.labelSmall?.copyWith(
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .labelSmall
-                                        ?.color
-                                        ?.withAlpha(200),
-                                  ),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

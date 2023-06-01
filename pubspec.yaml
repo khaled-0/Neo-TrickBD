@@ -32,17 +32,19 @@ dependencies:
     sdk: flutter
 
   dio: any
+  dio_cookie_manager: any
+  cookie_jar: any
+  path_provider: any
+
   url_launcher: any
+  skeletons: any
+  cached_network_image: any
 
   #For parsing HTML
   html: any
   # Android, iOS HTML Renderer
   flutter_html: any
 
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
 
 dev_dependencies:
   flutter_test:
@@ -66,7 +68,7 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-   # To add assets to your application, add an assets section, like this:
+  # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
 
