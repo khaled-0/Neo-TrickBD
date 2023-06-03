@@ -60,7 +60,6 @@ class CommentView extends StatelessWidget {
                             .textTheme
                             .bodySmall
                             ?.copyWith(color: Theme.of(context).hintColor)),
-
                     Text(comment.commentBody.toString(),
                         style: Theme.of(context).textTheme.bodyMedium)
                   ],

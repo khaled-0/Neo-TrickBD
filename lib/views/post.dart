@@ -1,98 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:html/dom.dart' as DOMElement; // ignore: library_prefixes
-import 'package:html/parser.dart';
 import 'package:neo_trickbd/components/comment_view.dart';
-import 'package:neo_trickbd/models/comment_model.dart';
 import 'package:neo_trickbd/models/post_model.dart';
 import 'package:skeletons/skeletons.dart';
 
-import '../dio.dart';
+import '../api/dio.dart';
+import '../api/get_post.dart';
 import '../main.dart';
 
 class Post extends StatefulWidget {
   final PostItemModel postItemModel;
 
   const Post({super.key, required this.postItemModel});
-
-  Future<PostModel> getPost({required PostItemModel postItem}) async {
-    final response = parse((await dio.get(postItem.url)).data);
-    var postParagraphDiv =
-        response.body?.querySelector(".post_paragraph")?.innerHtml;
-
-    var likeButton = response.body?.querySelector(".trickbd-like-count");
-    var likeCount = likeButton?.querySelector("span")?.text;
-
-    var authorAvatarUrl =
-        response.body?.querySelector(".avatar")?.attributes["src"];
-    var authorName = response.body?.querySelector(".author-link")?.text;
-    var authorRole = response.body?.querySelector(".user_role")?.text.trim();
-    var authorPageUrl =
-        response.body?.querySelector(".author-link")?.attributes["href"];
-
-    PostModel postModel = PostModel(postItemModel: postItemModel);
-    postModel.body = postParagraphDiv;
-    postModel.likeCount = int.tryParse(likeCount ?? "0");
-    postModel.authorName = authorName?.trim();
-    postModel.authorAvatarUrl = authorAvatarUrl;
-    postModel.authorRole =
-        authorRole?.replaceFirst(authorRole[0], authorRole[0].toUpperCase());
-    postModel.authorPageUrl = authorPageUrl;
-
-    List<CommentModel> comments = List.empty(growable: true);
-
-    var commentsListOl = response.body?.querySelector(".commentlist");
-    // ignore: avoid_function_literals_in_foreach_calls
-    commentsListOl?.children.forEach((element) {
-      var comment = parseComment(element);
-
-      List<CommentModel> replies = List.empty(growable: true);
-      var repliesUl = element.querySelector(".children");
-      // ignore: avoid_function_literals_in_foreach_calls
-      repliesUl?.children.forEach((element) {
-        var comment = parseComment(element);
-        if (comment != null) replies.add(comment);
-      });
-
-      if (replies.isNotEmpty) comment?.replies = replies;
-      if (comment != null) comments.add(comment);
-    });
-
-    if (comments.isNotEmpty) postModel.comments = comments;
-
-    return postModel;
-  }
-
-  CommentModel? parseComment(DOMElement.Element node) {
-    var authorName =
-        node.querySelector(".comment-author > .fn > .url")?.text.trim() ?? "";
-    var authorProfileLink =
-        node.querySelector(".comment-author > .fn > .url")?.attributes["href"];
-    var authorAvatarUrl =
-        node.querySelector(".comment-author > .avatar")?.attributes["src"] ??
-            "";
-
-    var authorRole = node
-            .querySelector(".comment-author > .fn > .user-badge")
-            ?.text
-            .trim() ??
-        "";
-    var commentBody = node.querySelector("p")?.text.trim() ?? "";
-    var commentDate =
-        node.querySelector(".comment-meta > a")?.text.trim() ?? "Unknown Date";
-
-    if (commentBody.isEmpty) return null;
-
-    return CommentModel(
-      authorName: authorName,
-      authorAvatarUrl: authorAvatarUrl,
-      authorProfileLink: authorProfileLink,
-      authorRole: authorRole,
-      commentBody: commentBody,
-      commentDate: commentDate,
-    );
-  }
 
   @override
   State<Post> createState() => _PostState();
@@ -106,7 +26,7 @@ class _PostState extends State<Post> {
   void initState() {
     super.initState();
     postModel = PostModel(postItemModel: widget.postItemModel);
-    widget.getPost(postItem: widget.postItemModel).then((value) {
+    getPost(postItemModel: widget.postItemModel).then((value) {
       statusMessage = null;
       setState(() => postModel = value);
     }).onError((error, stackTrace) {
@@ -297,7 +217,7 @@ class _PostState extends State<Post> {
   Widget _commentSection() {
     return Skeleton(
       isLoading: (postModel.commentCount != 0 && postModel.comments == null),
-      skeleton: Column(
+      skeleton: ListView(
         children: [
           const SkeletonLine(
             style: SkeletonLineStyle(
@@ -389,7 +309,7 @@ class _PostState extends State<Post> {
                   ],
                 ),
                 const Spacer(),
-                const Icon(Icons.keyboard_arrow_right_rounded)
+                const Icon(Icons.keyboard_arrow_right_rounded),
               ],
             ),
           ),

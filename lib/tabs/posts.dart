@@ -1,46 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:html/parser.dart';
 import 'package:neo_trickbd/components/post_item_view.dart';
 import 'package:neo_trickbd/views/post.dart';
 import 'package:skeletons/skeletons.dart';
 
-import '../dio.dart';
+import '../api/get_posts.dart';
 import '../models/post_model.dart';
 
 class Posts extends StatefulWidget {
   const Posts({super.key});
-
-  Future<List<PostItemModel>> getPosts({required int page}) async {
-    final response = parse(
-      (await dio.get("/page/$page")).data,
-    );
-
-    var recentPostsUl =
-        (response.body?.querySelectorAll(".rpul").last)?.querySelectorAll("li");
-
-    List<PostItemModel> recentPosts = List.empty(growable: true);
-
-    recentPostsUl?.forEach((element) {
-      var url = element.querySelector("a")?.attributes["href"]?.trim();
-      var title = element.querySelector("a")?.text.trim();
-      var thumbnailUrl =
-          element.querySelector("img")?.attributes["src"]?.trim();
-      var creationTime = element.querySelector("p")?.firstChild?.text?.trim();
-
-      var commentCount = element.querySelector("p > a")?.text.trim();
-      commentCount = commentCount?.replaceAll(RegExp(r'[^0-9]'), '');
-
-      recentPosts.add(PostItemModel(
-        url: url ?? "null",
-        title: title ?? "null",
-        thumbnailUrl: thumbnailUrl ?? "null",
-        creationTime: creationTime,
-        commentCount: int.tryParse(commentCount ?? "") ?? 0,
-      ));
-    });
-
-    return recentPosts;
-  }
 
   @override
   State<Posts> createState() => _PostsState();
@@ -55,7 +22,7 @@ class _PostsState extends State<Posts>
   void fetchMorePosts() {
     page++;
     setState(() => statusMessage = null);
-    widget.getPosts(page: page).then((value) {
+    getPosts(page: page).then((value) {
       for (var element in value) {
         if (!posts.contains(element)) posts.add(element);
       }

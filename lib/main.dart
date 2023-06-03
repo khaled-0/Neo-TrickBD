@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'dio.dart';
+import 'api/dio.dart';
 import 'home.dart';
 
 int get widthBreakpoint => 500;
