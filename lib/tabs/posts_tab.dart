@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:neo_trickbd/components/post_item_view.dart';
-import 'package:neo_trickbd/views/post.dart';
+import 'package:neo_trickbd/views/post_view.dart';
 import 'package:skeletons/skeletons.dart';
 
 import '../api/get_posts.dart';
 import '../models/post_model.dart';
 
-class Posts extends StatefulWidget {
-  const Posts({super.key});
+class PostsTab extends StatefulWidget {
+  const PostsTab({super.key});
 
   @override
-  State<Posts> createState() => _PostsState();
+  State<PostsTab> createState() => _PostsTabState();
 }
 
-class _PostsState extends State<Posts>
-    with AutomaticKeepAliveClientMixin<Posts> {
+class _PostsTabState extends State<PostsTab>
+    with AutomaticKeepAliveClientMixin<PostsTab> {
   final List<PostItemModel> posts = List.empty(growable: true);
   int page = 0;
   String? statusMessage;
@@ -22,7 +22,7 @@ class _PostsState extends State<Posts>
   void fetchMorePosts() {
     page++;
     setState(() => statusMessage = null);
-    getPosts(page: page).then((value) {
+    getRecentPosts(page: page).then((value) {
       for (var element in value) {
         if (!posts.contains(element)) posts.add(element);
       }
@@ -102,7 +102,7 @@ class _PostsState extends State<Posts>
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Post(postItemModel: post),
+                    builder: (context) => PostView(postItemModel: post),
                   ),
                 ),
               ),

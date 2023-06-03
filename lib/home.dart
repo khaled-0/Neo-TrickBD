@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:neo_trickbd/tabs/posts.dart';
+import 'package:neo_trickbd/tabs/browse_tab.dart';
+import 'package:neo_trickbd/tabs/posts_tab.dart';
 
 import 'main.dart';
 
@@ -16,9 +17,9 @@ class _HomeState extends State<Home> {
   late PageController tabController;
 
   final tabs = [
-    const Posts(),
+    const PostsTab(),
     const SizedBox(),
-    const SizedBox(),
+    const BrowseTab(),
   ];
 
   @override

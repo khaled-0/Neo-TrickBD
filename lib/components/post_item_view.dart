@@ -16,7 +16,7 @@ class PostItemView extends StatelessWidget {
       child: Row(
         children: [
           Hero(
-            tag: post.thumbnailUrl,
+            tag: post.url,
             child: CachedNetworkImage(
               imageUrl: post.thumbnailUrl,
               placeholder: (context, url) => const SkeletonAvatar(

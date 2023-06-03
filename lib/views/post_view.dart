@@ -9,16 +9,16 @@ import '../api/dio.dart';
 import '../api/get_post.dart';
 import '../main.dart';
 
-class Post extends StatefulWidget {
+class PostView extends StatefulWidget {
   final PostItemModel postItemModel;
 
-  const Post({super.key, required this.postItemModel});
+  const PostView({super.key, required this.postItemModel});
 
   @override
-  State<Post> createState() => _PostState();
+  State<PostView> createState() => _PostViewState();
 }
 
-class _PostState extends State<Post> {
+class _PostViewState extends State<PostView> {
   late PostModel postModel;
   String? statusMessage;
 
@@ -57,7 +57,7 @@ class _PostState extends State<Post> {
                   Stack(
                     children: [
                       Hero(
-                        tag: postModel.thumbnailUrl,
+                        tag: postModel.url,
                         child: CachedNetworkImage(
                           imageUrl: postModel.thumbnailUrl,
                           width: double.infinity,
@@ -94,6 +94,7 @@ class _PostState extends State<Post> {
                                   showModalBottomSheet(
                                     isScrollControlled: true,
                                     showDragHandle: true,
+                                    useSafeArea: true,
                                     context: context,
                                     builder: (context) => _commentSection(),
                                   );
@@ -106,8 +107,10 @@ class _PostState extends State<Post> {
                             ElevatedButton(
                               onPressed: () {},
                               style: ElevatedButton.styleFrom(
-                                  shape: const CircleBorder(),
-                                  alignment: Alignment.center),
+                                shape: const CircleBorder(),
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.all(0)
+                              ),
                               child: const Icon(Icons.share_rounded),
                             ),
                           ],
@@ -177,6 +180,7 @@ class _PostState extends State<Post> {
                         onTap: () => showModalBottomSheet(
                           isScrollControlled: true,
                           showDragHandle: true,
+                          useSafeArea: true,
                           context: context,
                           builder: (context) => _commentSection(),
                         ),
