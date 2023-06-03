@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'dio.dart';
 import 'home.dart';
 
+int get widthBreakpoint => 500;
+
 bool isDarkTheme(BuildContext context) =>
     Theme.of(context).brightness == Brightness.dark;
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await initDioClient();
 
   runApp(
@@ -15,18 +18,11 @@ Future<void> main() async {
       title: 'NeoTrickBD',
       home: const Home(),
       theme: ThemeData(
-        colorScheme: const ColorScheme.light(
-          primary: Colors.blue,
-          secondary: Colors.blueAccent,
-        ),
+        colorSchemeSeed: const Color(0xff0072bc),
         useMaterial3: true,
       ),
       darkTheme: ThemeData(
-        colorScheme: const ColorScheme.dark(
-          primary: Colors.blue,
-          secondary: Colors.blueAccent,
-          brightness: Brightness.dark,
-        ),
+        colorSchemeSeed: const Color(0xff0072bc),
         brightness: Brightness.dark,
         useMaterial3: true,
       ),

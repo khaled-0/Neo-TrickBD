@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
-import 'package:neo_trickbd/components/PostItemView.dart';
+import 'package:neo_trickbd/components/post_item_view.dart';
 import 'package:neo_trickbd/views/post.dart';
 import 'package:skeletons/skeletons.dart';
 

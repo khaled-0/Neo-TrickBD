@@ -1,3 +1,5 @@
+import 'comment_model.dart';
+
 class PostItemModel {
   String thumbnailUrl;
   String title;
@@ -32,6 +34,8 @@ class PostModel extends PostItemModel {
   String? authorAvatarUrl;
   String? authorPageUrl;
 
+  List<CommentModel>? comments;
+
   PostModel({
     required PostItemModel postItemModel,
     this.body,
@@ -40,6 +44,7 @@ class PostModel extends PostItemModel {
     this.authorPageUrl,
     this.authorRole,
     this.likeCount,
+    this.comments,
   }) : super(
           title: postItemModel.title,
           url: postItemModel.url,
