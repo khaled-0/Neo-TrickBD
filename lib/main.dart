@@ -8,6 +8,9 @@ int get widthBreakpoint => 500;
 double getScreenWidth(BuildContext context) =>
     MediaQuery.of(context).size.width;
 
+double getScreenHeight(BuildContext context) =>
+    MediaQuery.of(context).size.height;
+
 bool isDarkTheme(BuildContext context) =>
     Theme.of(context).brightness == Brightness.dark;
 

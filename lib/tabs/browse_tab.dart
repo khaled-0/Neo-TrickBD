@@ -4,7 +4,7 @@ import 'package:neo_trickbd/api/get_categories.dart';
 import 'package:neo_trickbd/api/get_posts.dart';
 import 'package:neo_trickbd/models/category_model.dart';
 import 'package:neo_trickbd/models/post_model.dart';
-import 'package:neo_trickbd/views/browse_by_category.dart';
+import 'package:neo_trickbd/views/browse_by_category_view.dart';
 import 'package:skeletons/skeletons.dart';
 
 import '../main.dart';
@@ -192,19 +192,22 @@ class _BrowseTabState extends State<BrowseTab>
                                   ],
                                 ),
                                 const Spacer(),
-                                DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    boxShadow: [
-                                      BoxShadow(
-                                          color: isDarkTheme(context)
-                                              ? Colors.black38
-                                              : Colors.white70),
-                                    ],
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      postItemModel.title,
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: isDarkTheme(context)
+                                                ? Colors.black38
+                                                : Colors.white70),
+                                      ],
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        postItemModel.title,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -229,13 +232,13 @@ class _BrowseTabState extends State<BrowseTab>
       onTap: () {
         if (getScreenWidth(context) > widthBreakpoint) {
           return setState(() =>
-              nestedCategoryBrowserView = BrowseByCategory(category: category));
+              nestedCategoryBrowserView = BrowseByCategoryView(category: category));
         }
 
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => BrowseByCategory(category: category),
+            builder: (context) => BrowseByCategoryView(category: category),
           ),
         );
       },

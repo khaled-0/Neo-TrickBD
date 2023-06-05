@@ -7,16 +7,16 @@ import 'package:skeletons/skeletons.dart';
 import '../api/get_posts.dart';
 import '../models/post_model.dart';
 
-class BrowseByCategory extends StatefulWidget {
+class BrowseByCategoryView extends StatefulWidget {
   final CategoryModel category;
 
-  const BrowseByCategory({super.key, required this.category});
+  const BrowseByCategoryView({super.key, required this.category});
 
   @override
-  State<BrowseByCategory> createState() => _BrowseByCategoryState();
+  State<BrowseByCategoryView> createState() => _BrowseByCategoryViewState();
 }
 
-class _BrowseByCategoryState extends State<BrowseByCategory> {
+class _BrowseByCategoryViewState extends State<BrowseByCategoryView> {
   final List<PostItemModel> posts = List.empty(growable: true);
   int page = 0;
   String? statusMessage;
@@ -41,7 +41,7 @@ class _BrowseByCategoryState extends State<BrowseByCategory> {
 
   bool _handleScrollNotification(ScrollNotification notification) {
     if (notification is ScrollEndNotification) {
-      if (notification.metrics.extentAfter < posts.length / 3) {
+      if (notification.metrics.extentAfter < 1500) {
         if (statusMessage == null) fetchMorePosts();
       }
     }
@@ -79,7 +79,7 @@ class _BrowseByCategoryState extends State<BrowseByCategory> {
                   //Skeleton Loader
                   return Column(
                     children: List.filled(
-                      8,
+                      posts.isEmpty ? 8 : 2,
                       SkeletonListTile(
                         hasSubtitle: true,
                         leadingStyle:

@@ -1,3 +1,5 @@
+import 'package:neo_trickbd/models/author_model.dart';
+
 import 'comment_model.dart';
 
 class PostItemModel {
@@ -28,21 +30,14 @@ class PostModel extends PostItemModel {
   String? body;
 
   int? likeCount;
-
-  String? authorName;
-  String? authorRole;
-  String? authorAvatarUrl;
-  String? authorPageUrl;
+  AuthorModel? author;
 
   List<CommentModel>? comments;
 
   PostModel({
     required PostItemModel postItemModel,
     this.body,
-    this.authorAvatarUrl,
-    this.authorName,
-    this.authorPageUrl,
-    this.authorRole,
+    this.author,
     this.likeCount,
     this.comments,
   }) : super(

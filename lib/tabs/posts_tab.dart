@@ -38,7 +38,7 @@ class _PostsTabState extends State<PostsTab>
 
   bool _handleScrollNotification(ScrollNotification notification) {
     if (notification is ScrollEndNotification) {
-      if (notification.metrics.extentAfter < posts.length / 3) {
+      if (notification.metrics.extentAfter < 1500) {
         if (statusMessage == null) fetchMorePosts();
       }
     }
@@ -71,7 +71,7 @@ class _PostsTabState extends State<PostsTab>
                 //Skeleton Loader
                 return Column(
                   children: List.filled(
-                    8,
+                    posts.isEmpty ? 8 : 2,
                     SkeletonListTile(
                       hasSubtitle: true,
                       leadingStyle:

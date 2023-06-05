@@ -1,4 +1,5 @@
 import 'package:html/parser.dart';
+import 'package:neo_trickbd/models/author_model.dart';
 
 import '../models/comment_model.dart';
 import '../models/post_model.dart';
@@ -22,11 +23,14 @@ Future<PostModel> getPost({required PostItemModel postItemModel}) async {
   PostModel postModel = PostModel(postItemModel: postItemModel);
   postModel.body = postParagraphDiv;
   postModel.likeCount = int.tryParse(likeCount ?? "0");
-  postModel.authorName = authorName?.trim();
-  postModel.authorAvatarUrl = authorAvatarUrl;
-  postModel.authorRole =
-      authorRole?.replaceFirst(authorRole[0], authorRole[0].toUpperCase());
-  postModel.authorPageUrl = authorPageUrl;
+
+  postModel.author = AuthorModel(
+    authorPageUrl: authorPageUrl ?? "",
+    authorName: authorName?.trim(),
+    authorAvatar: authorAvatarUrl,
+    authorRole:
+        authorRole?.replaceFirst(authorRole[0], authorRole[0].toUpperCase()),
+  );
 
   List<CommentModel> comments = List.empty(growable: true);
 

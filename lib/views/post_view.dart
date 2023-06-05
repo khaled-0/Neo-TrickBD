@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:neo_trickbd/components/comment_view.dart';
 import 'package:neo_trickbd/models/post_model.dart';
+import 'package:neo_trickbd/views/posts_by_author_view.dart';
 import 'package:skeletons/skeletons.dart';
 
 import '../api/dio.dart';
@@ -107,10 +108,9 @@ class _PostViewState extends State<PostView> {
                             ElevatedButton(
                               onPressed: () {},
                               style: ElevatedButton.styleFrom(
-                                shape: const CircleBorder(),
-                                alignment: Alignment.center,
-                                padding: const EdgeInsets.all(0)
-                              ),
+                                  shape: const CircleBorder(),
+                                  alignment: Alignment.center,
+                                  padding: const EdgeInsets.all(0)),
                               child: const Icon(Icons.share_rounded),
                             ),
                           ],
@@ -257,11 +257,24 @@ class _PostViewState extends State<PostView> {
           Expanded(
             child: ListView.builder(
               physics: const BouncingScrollPhysics(),
-              itemCount: postModel.comments?.length,
+              itemCount: postModel.comments?.length ?? 0,
               shrinkWrap: true,
               itemBuilder: (context, index) => Padding(
                 padding: const EdgeInsets.all(12.0),
-                child: CommentView(comment: postModel.comments![index]),
+                child: CommentView(
+                  comment: postModel.comments![index],
+                  onAuthorClick:
+                      (postModel.comments![index].author.authorPageUrl.isEmpty)
+                          ? null
+                          : () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PostsByAuthorView(
+                                    author: postModel.comments![index].author,
+                                  ),
+                                ),
+                              ),
+                ),
               ),
             ),
           ),
@@ -272,7 +285,7 @@ class _PostViewState extends State<PostView> {
 
   Widget _authorInfo() {
     return Skeleton(
-      isLoading: postModel.authorName == null,
+      isLoading: postModel.author?.authorName == null,
       skeleton: SkeletonListTile(
         padding: const EdgeInsets.all(8),
         hasSubtitle: true,
@@ -283,7 +296,16 @@ class _PostViewState extends State<PostView> {
       child: Padding(
         padding: const EdgeInsets.all(4.0),
         child: InkWell(
-          onTap: () {},
+          onTap: (postModel.author == null ||
+                  postModel.author!.authorPageUrl.isEmpty)
+              ? null
+              : () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          PostsByAuthorView(author: postModel.author!),
+                    ),
+                  ),
           borderRadius: BorderRadius.circular(8),
           child: Padding(
             padding: const EdgeInsets.all(4.0),
@@ -292,7 +314,7 @@ class _PostViewState extends State<PostView> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: CachedNetworkImage(
-                    imageUrl: postModel.authorAvatarUrl ?? "",
+                    imageUrl: postModel.author?.authorAvatar ?? "",
                     fit: BoxFit.contain,
                     placeholder: (context, url) => const SkeletonAvatar(
                       style: SkeletonAvatarStyle(height: 78, width: 78),
@@ -306,10 +328,10 @@ class _PostViewState extends State<PostView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      postModel.authorName.toString(),
+                      "${postModel.author?.authorName}",
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
-                    Text(postModel.authorRole.toString())
+                    Text("${postModel.author?.authorRole.toString()}")
                   ],
                 ),
                 const Spacer(),

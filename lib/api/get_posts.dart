@@ -28,9 +28,9 @@ Future<List<PostItemModel>> getRecentPosts(
     commentCount = commentCount?.replaceAll(RegExp(r'[^0-9]'), '');
 
     recentPosts.add(PostItemModel(
-      url: url ?? "null",
-      title: title ?? "null",
-      thumbnailUrl: thumbnailUrl ?? "null",
+      url: url ?? "",
+      title: title ?? "",
+      thumbnailUrl: thumbnailUrl ?? "",
       creationTime: creationTime,
       commentCount: int.tryParse(commentCount ?? "") ?? 0,
     ));
@@ -57,9 +57,9 @@ Future<List<PostItemModel>> getHotPosts() async {
     commentCount = commentCount?.replaceAll(RegExp(r'[^0-9]'), '');
 
     hotPosts.add(PostItemModel(
-      url: url ?? "null",
-      title: title ?? "null",
-      thumbnailUrl: thumbnailUrl ?? "null",
+      url: url ?? "",
+      title: title ?? "",
+      thumbnailUrl: thumbnailUrl ?? "",
       creationTime: creationTime,
       commentCount: int.tryParse(commentCount ?? "") ?? 0,
     ));
@@ -67,4 +67,3 @@ Future<List<PostItemModel>> getHotPosts() async {
 
   return hotPosts;
 }
-

@@ -3,8 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:neo_trickbd/models/comment_model.dart';
 import 'package:skeletons/skeletons.dart';
 
+import '../views/posts_by_author_view.dart';
+
 class CommentView extends StatelessWidget {
-  const CommentView({super.key, required this.comment});
+  final VoidCallback? onAuthorClick;
+
+  const CommentView({super.key, required this.comment, this.onAuthorClick});
 
   final CommentModel comment;
 
@@ -20,14 +24,18 @@ class CommentView extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(36),
-                child: CachedNetworkImage(
-                  imageUrl: comment.authorAvatarUrl,
-                  fit: BoxFit.contain,
-                  placeholder: (context, url) => const SkeletonAvatar(
-                    style: SkeletonAvatarStyle(height: 36, width: 36),
+                child: InkWell(
+                  onTap: onAuthorClick,
+                  borderRadius: BorderRadius.circular(36),
+                  child: CachedNetworkImage(
+                    imageUrl: comment.author.authorAvatar ?? "",
+                    fit: BoxFit.contain,
+                    placeholder: (context, url) => const SkeletonAvatar(
+                      style: SkeletonAvatarStyle(height: 36, width: 36),
+                    ),
+                    height: 36,
+                    width: 36,
                   ),
-                  height: 36,
-                  width: 36,
                 ),
               ),
               const SizedBox(width: 8),
@@ -38,17 +46,21 @@ class CommentView extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Text(
-                          comment.authorName.toString(),
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontWeight: FontWeight.bold),
+                        InkWell(
+                          onTap: onAuthorClick,
+                          child: Text(
+                            comment.author.authorName.toString(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontWeight: FontWeight.bold),
+                          ),
                         ),
                         const SizedBox(width: 4),
-                        Text(comment.authorRole.toString(),
+                        Text(comment.author.authorRole.toString(),
                             style: Theme.of(context)
                                 .textTheme
                                 .bodySmall
@@ -72,7 +84,19 @@ class CommentView extends StatelessWidget {
           ...?comment.replies
               ?.map((reply) => Padding(
                     padding: const EdgeInsets.only(left: 32.0),
-                    child: CommentView(comment: reply),
+                    child: CommentView(
+                      comment: reply,
+                      onAuthorClick: reply.author.authorPageUrl.isEmpty
+                          ? null
+                          : () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PostsByAuthorView(
+                                    author: reply.author,
+                                  ),
+                                ),
+                              ),
+                    ),
                   ))
               .toList()
       ],
